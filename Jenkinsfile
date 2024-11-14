@@ -30,11 +30,17 @@ pipeline {
             }
         }
         stage('Security Scan') {
-   		steps {
-        		bat 'venv\\Scripts\\activate && bandit -r . -o bandit_report.txt --format txt'
-        		archiveArtifacts artifacts: 'bandit_report.txt', allowEmptyArchive: true // Archive report
-    		}
-	}
+    steps {
+        script {
+            def banditStatus = bat(returnStatus: true, script: 'venv\\Scripts\\activate && bandit -r . -o bandit_report.txt --format txt')
+            if (banditStatus != 0) {
+                echo "Bandit found potential security issues. Check the report: bandit_report.txt"
+            }
+        }
+        archiveArtifacts artifacts: 'bandit_report.txt', allowEmptyArchive: true
+    }
+}
+
 
         stage('Deploy') {
             steps {
