@@ -30,10 +30,12 @@ pipeline {
             }
         }
         stage('Security Scan') {
-            steps {
-                bat 'venv\\Scripts\\activate && bandit -r .'
-            }
-        }
+   		steps {
+        		bat 'venv\\Scripts\\activate && bandit -r . -o bandit_report.txt --format txt'
+        		archiveArtifacts artifacts: 'bandit_report.txt', allowEmptyArchive: true // Archive report
+    		}
+	}
+
         stage('Deploy') {
             steps {
                 script {
