@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        VIRTUAL_ENV = 'venv'
+        PYTHONPATH = "${env.WORKSPACE}" // Sets the current workspace as PYTHONPATH
+    }
     stages {
         stage('Setup') {
             steps {
@@ -16,6 +20,11 @@ pipeline {
             steps {
                 bat 'venv\\Scripts\\activate && pytest'
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
